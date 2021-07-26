@@ -30,102 +30,53 @@
 
 		const loadingManager = new THREE.LoadingManager(function () {
 			scene.add(hands);
-			scene.add(skele);
-			scene.add(new THREE.AxesHelper(5));
 
 			const gui = new GUI();
-			const thumbDistal = gui.addFolder('Thumb Distal');
-			thumbDistal.add(skele.bones[19].rotation, 'x', -Math.PI, Math.PI);
-			thumbDistal.__controllers[0].name('rotation.x');
-			thumbDistal.add(skele.bones[19].rotation, 'y', -Math.PI, Math.PI);
-			thumbDistal.__controllers[1].name('rotation.y');
-			thumbDistal.add(skele.bones[19].rotation, 'z', -Math.PI, Math.PI);
-			thumbDistal.__controllers[2].name('rotation.z');
-
-			const thumbProximal = gui.addFolder('Thumb Proximal');
-			thumbProximal.add(skele.bones[18].rotation, 'x', -Math.PI, Math.PI);
-			thumbProximal.__controllers[0].name('rotation.x');
-			thumbProximal.add(skele.bones[18].rotation, 'y', -Math.PI, Math.PI);
-			thumbProximal.__controllers[1].name('rotation.y');
-			thumbProximal.add(skele.bones[18].rotation, 'z', -Math.PI, Math.PI);
-			thumbProximal.__controllers[2].name('rotation.z');
-
-			const thumbMetacarpal = gui.addFolder('Thumb Metacarpal');
-			thumbMetacarpal.add(skele.bones[17].rotation, 'x', -Math.PI, Math.PI);
-			thumbMetacarpal.__controllers[0].name('rotation.x');
-			thumbMetacarpal.add(skele.bones[17].rotation, 'y', -Math.PI, Math.PI);
-			thumbMetacarpal.__controllers[1].name('rotation.y');
-			thumbMetacarpal.add(skele.bones[17].rotation, 'z', -Math.PI, Math.PI);
-			thumbMetacarpal.__controllers[2].name('rotation.z');
-
-			const pointerDistal = gui.addFolder('Pointer Distal');
-			pointerDistal.add(
-				skele.bones.find((bone) => bone.name == 'finger_index03L').rotation,
-				'x',
-				-Math.PI,
-				Math.PI
+			const thumb = gui.addFolder('Thumb');
+			thumb.add(
+				skele.bones.find((bone) => bone.name == 'thumb01L').rotation, 
+				'x', 
+				-Math.PI*2/5, -Math.PI/10
 			);
-			pointerDistal.__controllers[0].name('rotation.x');
-			pointerDistal.add(
-				skele.bones.find((bone) => bone.name == 'finger_index03L').rotation,
-				'y',
-				-Math.PI,
-				Math.PI
+			thumb.__controllers[0].name('Metacarpal X');
+			thumb.add(
+				skele.bones.find((bone) => bone.name == 'thumb01L').rotation, 
+				'y', 
+				Math.PI/10, Math.PI/3
 			);
-			pointerDistal.__controllers[1].name('rotation.y');
-			pointerDistal.add(
-				skele.bones.find((bone) => bone.name == 'finger_index03L').rotation,
-				'z',
-				-Math.PI,
-				Math.PI
+			thumb.__controllers[1].name('Metacarpal Y');
+			thumb.add(
+				skele.bones.find((bone) => bone.name == 'thumb02L').rotation, 
+				'x', 
+				0, Math.PI/3
 			);
-			pointerDistal.__controllers[2].name('rotation.z');
+			thumb.__controllers[2].name('Proximal');
+			thumb.add(
+				skele.bones.find((bone) => bone.name == 'thumb03L').rotation, 
+				'x', 
+				-Math.PI/5, Math.PI/3
+			);
+			thumb.__controllers[3].name('Distal');
 
-			const pointerMiddle = gui.addFolder('Pointer Middle');
-			pointerMiddle.add(
+			const pointer = gui.addFolder('Pointer');
+			pointer.add(
+				skele.bones.find((bone) => bone.name == 'finger_index01L').rotation,
+				'x', 
+				-Math.PI/10, Math.PI/2
+			);
+			pointer.__controllers[0].name('Proximal');
+			pointer.add(
 				skele.bones.find((bone) => bone.name == 'finger_index02L').rotation,
 				'x',
-				-Math.PI,
-				Math.PI
+				-Math.PI/30, Math.PI*5/8
 			);
-			pointerMiddle.__controllers[0].name('rotation.x');
-			pointerMiddle.add(
-				skele.bones.find((bone) => bone.name == 'finger_index02L').rotation,
-				'y',
-				-Math.PI,
-				Math.PI
-			);
-			pointerMiddle.__controllers[1].name('rotation.y');
-			pointerMiddle.add(
-				skele.bones.find((bone) => bone.name == 'finger_index02L').rotation,
-				'z',
-				-Math.PI,
-				Math.PI
-			);
-			pointerMiddle.__controllers[2].name('rotation.z');
-
-			const pointerProximal = gui.addFolder('Pointer Proximal');
-			pointerProximal.add(
-				skele.bones.find((bone) => bone.name == 'finger_index01L').rotation,
+			pointer.__controllers[1].name('Middle');
+			pointer.add(
+				skele.bones.find((bone) => bone.name == 'finger_index03L').rotation,
 				'x',
-				-Math.PI,
-				Math.PI
+				-Math.PI/10, Math.PI/3
 			);
-			pointerProximal.__controllers[0].name('rotation.x');
-			pointerProximal.add(
-				skele.bones.find((bone) => bone.name == 'finger_index01L').rotation,
-				'y',
-				-Math.PI,
-				Math.PI
-			);
-			pointerProximal.__controllers[1].name('rotation.y');
-			pointerProximal.add(
-				skele.bones.find((bone) => bone.name == 'finger_index01L').rotation,
-				'z',
-				-Math.PI,
-				Math.PI
-			);
-			pointerProximal.__controllers[2].name('rotation.z');
+			pointer.__controllers[2].name('Distal');
 		});
 
 		// gltf
