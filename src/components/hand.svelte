@@ -1,11 +1,12 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 	import { browser } from '$app/env';
 	
 	let Stats, THREE, GUI, GLTFLoader, OrbitControls;
 
 	let container, stats, clock, width, height;
-	let camera, scene, renderer, controls, hands, skele;
+	let camera, scene, renderer, controls, gui;
+	let hands: typeof THREE.Mesh, skele: typeof THREE.SkeletonHelper;
 
 	$: {
 		if(camera && renderer){
@@ -17,7 +18,7 @@
 
 	function init() {
 		camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 2000);
-		camera.position.set(8, 10, 8);
+		camera.position.set(3, 2, -2);
 		camera.lookAt(0, 3, 0);
 		camera.aspect = width/height;
 		camera.updateProjectionMatrix();
@@ -31,7 +32,8 @@
 		const loadingManager = new THREE.LoadingManager(function () {
 			scene.add(hands);
 
-			const gui = new GUI();
+			// Setup gui options for controlling the hand
+			gui = new GUI();
 			const thumb = gui.addFolder('Thumb');
 			thumb.add(
 				skele.bones.find((bone) => bone.name == 'thumb01L').rotation, 
@@ -84,11 +86,11 @@
 		const loader = new GLTFLoader(loadingManager);
 		loader.load('/lefthand_tex.glb', function (gltf) {
 			hands = gltf.scene;
+			hands.rotation.y += -Math.PI/2;
 			hands.scale.x = hands.scale.y = hands.scale.z = 10;
-			hands.rotation.y = 180;
+			hands.position.z += -.1;
 			skele = new THREE.SkeletonHelper(hands);
 		});
-
 		//
 
 		const ambientLight = new THREE.AmbientLight(0xcccccc, 0.4);
@@ -97,6 +99,8 @@
 		const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
 		directionalLight.position.set(1, 1, 0).normalize();
 		scene.add(directionalLight);
+
+		//scene.add(new THREE.AxesHelper())
 
 		//
 
@@ -108,10 +112,12 @@
 		//
 
 		stats = new Stats();
-		container.appendChild(stats.dom);
+		stats.domElement.style.position = "absolute";
+		container.appendChild(stats.domElement);
 
 		// Controls
 		controls = new OrbitControls(camera, renderer.domElement);
+		controls.enableZoom = false;
 	}
 
 	function animate() {
@@ -125,6 +131,7 @@
 		const delta = clock.getDelta();
 
 		if (hands !== undefined) {
+
 		}
 		if (skele !== undefined) {
 		}
@@ -144,17 +151,22 @@
 			init();
 			animate();
 		});
+
+		onDestroy(async () => {
+			gui.destroy();
+		})
 	}
+	
 </script>
 
 <div id="container" bind:clientWidth={width} bind:clientHeight={height} bind:this={container} />
 
 <style>
 	#container {
-		height: 100vh;
-	}
-	:global(body) {
-		/* this will apply to <body> */
+		flex: 1 1 auto;
+		min-height: 5rem;
+		min-width: 5rem;
+		padding: 0;
 		margin: 0;
 	}
 </style>

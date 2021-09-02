@@ -1,4 +1,26 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<script lang='ts'>
+import Hand from "../components/hand.svelte";
+    
+</script>
+<div id="container">
+    <div>
+        <h1>Welcome to Hand-Toy</h1>
+        <p>This demo is built using Svelte-Kit and Three.js</p>
+    </div>
 
-<a href="/hand">Open the hand demo</a>
+    <Hand/>
+</div>
+<style>
+    #container {
+        max-width: 100vw;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+    #container > * {
+        padding: 1rem;
+    }
+    :global(body) {
+        margin: 0;
+    }
+</style>
