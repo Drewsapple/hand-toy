@@ -5,20 +5,35 @@
     let angle: number = 0;
     let encoder = new TextEncoder();
 
-	let servoService = null;
-	function handleConnect() {
-		navigator.bluetooth
+    let server;
+	async function handleConnect() {
+		let device = await (navigator.bluetooth
 			.requestDevice({
-				filters: [{
-                    services: ['829e76b6-1b78-4c97-aa0a-8c65e3815830']
-                }]
+				filters: [
+                    {
+                        name: "Prosthesis",
+                    },
+                ],
+                optionalServices: [
+                    '1a6a0dc9-7db0-4e5f-8b48-5122af7d0b73',
+                    '6e400003-b5a3-f393-e0a9-e50e24dcca9e',
+                ]
 			})
-			.then((device) => device.gatt.connect())
-			.then((server) => server.getPrimaryService('829e76b6-1b78-4c97-aa0a-8c65e3815830'))
-			.then((service) => {
-				servoService = service;
-				return Promise.all([service.getCharacteristic("d2cc6bcc-fab2-44fc-848d-68e0fe5686ef").then(handleAngleCharacteristic)]);
-			});
+        )
+
+		let server = await device.gatt.connect()
+        let services = await server.getPrimaryServices()
+        let characteristics = await Promise.all(services.map(async service => await (await service.getCharacteristics())[0] ) );
+        //console.log(await (characteristics[0]).readValue())
+        await characteristics.forEach(async char => {
+            await char;
+            await char.readValue()
+            console.log(char.uuid, new Float32Array(await char.value.buffer)[0])
+        });
+        // 	return Promise.all([
+        //         service.getCharacteristic("6e400003-b5a3-f393-e0a9-e50e24dcca9e").then(handleCharacteristicLogString),
+        //         // service.getCharacteristic("6e400004-b5a3-f393-e0a9-e50e24dcca9e").then(handlePIDgains),
+        // ]);
 	}
 
 	function handleAngleCharacteristic(characteristic) {
@@ -34,6 +49,25 @@
         }, 50)
 	}
 
+    function handleEncoderCharacteristic(characteristic) {
+        setInterval(async () => {
+            console.log(await characteristic.readValue())
+        }, 50)
+    }
+
+    function handlePIDgains(characteristic) {
+        setInterval(async () => {
+            console.log((await characteristic.readValue()) )
+        }, 5000)
+    }
+
+    function handleCharacteristicLogString(characteristic) {
+        console.log(characteristic)
+        characteristic.oncharacteristicvaluechanged(() => {
+            console.log(characteristic.value)
+        })
+    }
+
 	function onServoAngleChanged(event) {
 		const characteristic = event.target;
 		console.log(characteristic.value);
@@ -42,7 +76,7 @@
     function writeAngle(event){
         let num: number = event.target.value
         if(angleCharacteristic) {
-            console.log(encoder.encode(angle.toString()))
+            // console.log(encoder.encode(angle.toString()))
             angleCharacteristic.writeValue(encoder.encode(angle.toString()))
         }
     }
