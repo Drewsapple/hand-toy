@@ -2,12 +2,12 @@
     import { onMount, tick } from "svelte";
 import { afterUpdate, dataset_dev, each, loop_guard } from "svelte/internal";
     import Scatterplot from "../components/plots/scatterplot.svelte";
-    import LinePlot from "../components/plots/lineplot.svelte";
     import ServoControl from "../components/servoControl.svelte";
     import { bleData } from "../stores/stores.js";
-import Lineplot from "../components/plots/lineplot.svelte";
+    import Lineplot from "../components/plots/lineplot.svelte";
+    import Scatter3D from "../components/plots/Scatter3D.svelte";
     
-    let points: {timestamp: number, value: number}[] = []
+    let points: {timestamp: number, period: number, sin: number}[] = []
     let time = Date.now();
     afterUpdate(() => {
         time = Date.now()
@@ -15,11 +15,13 @@ import Lineplot from "../components/plots/lineplot.svelte";
     
     bleData.subscribe(data => {
         points = points.filter((point) => (point.timestamp - time) > -60000);
-        let listing = data['6e400002-b5a3-f393-e0a9-e50e24dcca9e']
-        if(listing){
+        let sinData = data['6e400002-b5a3-f393-e0a9-e50e24dcca9e']
+        let periodData = data['6e400006-b5a3-f393-e0a9-e50e24dcca9e'];
+        if(sinData && periodData) {
             points.push({
                 timestamp: time,
-                value: listing['value'],
+                period: periodData['value'],
+                sin: sinData['value'],
             })
         }
     })
@@ -28,7 +30,17 @@ import Lineplot from "../components/plots/lineplot.svelte";
         points: points.map((point) => {
             return {
                 x: (point.timestamp - time)/1000,
-                y: point.value,
+                y: point.sin,
+            }
+        })
+    }
+
+    $: data3 = {
+        points: points.map((point) => {
+            return {
+                x: (point.timestamp - time)/1000,
+                y: point.period,
+                z: 5*point.sin,
             }
         })
     }
@@ -47,7 +59,7 @@ import Lineplot from "../components/plots/lineplot.svelte";
     xTickCount={16}
     yTickCount={11}
     ></Lineplot>
-    <button on:click={() => console.log($bleData)} >log points</button>
+    <Scatter3D points={data3} />
 </div>
 
 <table>
@@ -55,6 +67,7 @@ import Lineplot from "../components/plots/lineplot.svelte";
 		<tr>
 			<td>{characteristic[0]}</td>
 			<td>{$bleData[characteristic[0]].value}</td>
+            <!-- svelte-ignore missing-declaration -->
             <td><button on:click={ () => {
                 let payload = new Float32Array(
                     [
@@ -66,6 +79,7 @@ import Lineplot from "../components/plots/lineplot.svelte";
 		</tr>
 	{/each}
 </table>
+
 
 <style>
     #container {
