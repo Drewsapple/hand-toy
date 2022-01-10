@@ -1,9 +1,13 @@
 <script lang="ts">
 	import { browser } from '$app/env';
+    import { writable } from 'svelte/store';
+    import {bleData} from '../stores/stores.js'
 
     let angleCharacteristic = null;
     let angle: number = 0;
     let encoder = new TextEncoder();
+
+    
 
     let server;
 	async function handleConnect() {
@@ -17,6 +21,7 @@
                 optionalServices: [
                     '1a6a0dc9-7db0-4e5f-8b48-5122af7d0b73',
                     '6e400003-b5a3-f393-e0a9-e50e24dcca9e',
+                    '6e400005-b5a3-f393-e0a9-e50e24dcca9e',
                 ]
 			})
         )
@@ -27,8 +32,23 @@
         //console.log(await (characteristics[0]).readValue())
         await characteristics.forEach(async char => {
             await char;
+            await console.log(char)
+            // await console.log(char.uuid, new Float32Array(await char.value.buffer)[0])
+            char.oncharacteristicvaluechanged = async () => {
+                await char.readValue()
+                let uuid = char.uuid; 
+                let value = new Float32Array(await char.value.buffer)[0];
+                bleData.update(data => {
+                    data[uuid] = {
+                        value,
+                        characteristic: char,
+                    }
+                    return data
+                })
+                
+            }
             await char.readValue()
-            console.log(char.uuid, new Float32Array(await char.value.buffer)[0])
+            //await char.startNotifications();
         });
         // 	return Promise.all([
         //         service.getCharacteristic("6e400003-b5a3-f393-e0a9-e50e24dcca9e").then(handleCharacteristicLogString),
@@ -83,10 +103,11 @@
 </script>
 
 <button on:click={handleConnect}>Connect Device</button>
-<br/>
+<br />
+
 <label>
-    Servo Angle:  
-	<input type=number bind:value={angle} on:input={writeAngle} min=0 max=180>
-    <br/>
-	<input type=range bind:value={angle} on:input={writeAngle} min=0 max=180>
+	Servo Angle:
+	<input type="number" bind:value={angle} on:input={writeAngle} min="0" max="180" />
+	<br />
+	<input type="range" bind:value={angle} on:input={writeAngle} min="0" max="180" />
 </label>

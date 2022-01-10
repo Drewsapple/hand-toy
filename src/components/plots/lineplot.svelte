@@ -1,15 +1,15 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { scaleLinear } from 'd3';
+	import { line, scaleLinear } from 'd3';
 
-	interface ScatterData {
+	interface Data2D {
 		points: point[];
 	}
 	interface point {
 		x: number;
 		y: number;
 	}
-	export let data: ScatterData;
+	export let data: Data2D;
 	export let minPoint: point;
 	export let maxPoint: point;
 	export let xTickCount: number;
@@ -46,6 +46,12 @@
 		}
 		return arr;
 	}
+
+	$: lineFromData = () => {
+		return line()
+			.x((d) => xScale(d.x))
+			.y((d) => yScale(d.y))(data.points);
+	}
 </script>
 
 <svelte:window on:resize={resize} />
@@ -69,21 +75,13 @@
 		{/each}
 	</g>
 
-	<!-- data -->
-	{#each data.points as point}
-		<circle cx={xScale(point.x)} cy={yScale(point.y)} r="5" />
-	{/each}
+	<path d={lineFromData()} />
 </svg>
 
 <style>
 	svg {
 		height: 100%;
 		width: 100%;
-	}
-	circle {
-		fill: red;
-		fill-opacity: 0.6;
-		stroke: rgba(0, 0, 0, 0.5);
 	}
 	.tick line {
 		stroke: #222;
@@ -95,6 +93,11 @@
 	text {
 		font-size: 12px;
 		fill: #999;
+	}
+	path {
+		stroke: #000;
+		fill: transparent;
+		stroke-width: 1px;
 	}
 	.x-axis text {
 		text-anchor: middle;
