@@ -1,17 +1,21 @@
 <script lang="ts">
-	import { browser } from '$app/env';
-    import { writable } from 'svelte/store';
     import {bleData} from '../stores/stores.js'
 
-    let angleCharacteristic = null;
-    let angle: number = 0;
-    let encoder = new TextEncoder();
-
-    
-
+    let device;
     let server;
+    let encoder = new TextEncoder();
+    export let connected;
+
+
+    $: if(server) connected = server.connected;
+
 	async function handleConnect() {
-		let device = await (navigator.bluetooth
+        if(connected) {
+            server.disconnect();
+            console.log("disconnected")
+            return;
+        }
+        device = await (navigator.bluetooth
 			.requestDevice({
 				filters: [
                     {
@@ -26,7 +30,8 @@
 			})
         )
 
-		let server = await device.gatt.connect()
+		
+		server = await device.gatt.connect()
         let services = await server.getPrimaryServices()
         let characteristics = await Promise.all(services.map(async service => await (await service.getCharacteristics())[0] ) );
         //console.log(await (characteristics[0]).readValue())
@@ -55,59 +60,20 @@
         //         // service.getCharacteristic("6e400004-b5a3-f393-e0a9-e50e24dcca9e").then(handlePIDgains),
         // ]);
 	}
-
-	function handleAngleCharacteristic(characteristic) {
-        angleCharacteristic = characteristic;
-        setInterval(async () => {
-            let angleData: DataView = await characteristic.readValue()
-            let newAngle: number = 0
-            for(let i = 0; i < angleData.byteLength; i++){
-                let digit = angleData.getUint8(i) - 0x30;
-                newAngle += digit * (10 ** (angleData.byteLength - i - 1))
-            }
-            angle = newAngle
-        }, 50)
-	}
-
-    function handleEncoderCharacteristic(characteristic) {
-        setInterval(async () => {
-            console.log(await characteristic.readValue())
-        }, 50)
-    }
-
-    function handlePIDgains(characteristic) {
-        setInterval(async () => {
-            console.log((await characteristic.readValue()) )
-        }, 5000)
-    }
-
-    function handleCharacteristicLogString(characteristic) {
-        console.log(characteristic)
-        characteristic.oncharacteristicvaluechanged(() => {
-            console.log(characteristic.value)
-        })
-    }
-
-	function onServoAngleChanged(event) {
-		const characteristic = event.target;
-		console.log(characteristic.value);
-	}
-
-    function writeAngle(event){
-        let num: number = event.target.value
-        if(angleCharacteristic) {
-            // console.log(encoder.encode(angle.toString()))
-            angleCharacteristic.writeValue(encoder.encode(angle.toString()))
-        }
-    }
 </script>
 
-<button on:click={handleConnect}>Connect Device</button>
-<br />
+<nav class="headerbar">
+    <a href="/" >Home</a>
+    <a href="/handplot" >Hand Plot</a>
+    <button id="connector" on:click={handleConnect}>{connected ? "Disconnect" : "Connect Device"}</button>
+</nav>
 
-<label>
-	Servo Angle:
-	<input type="number" bind:value={angle} on:input={writeAngle} min="0" max="180" />
-	<br />
-	<input type="range" bind:value={angle} on:input={writeAngle} min="0" max="180" />
-</label>
+<style>
+    .headerbar {
+        position: fixed;
+    }
+    #connector {
+        position: fixed;
+        right: 0;
+    }
+</style>

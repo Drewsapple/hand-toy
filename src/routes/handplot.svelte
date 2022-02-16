@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { afterUpdate, dataset_dev, each, loop_guard } from 'svelte/internal';
+	import { afterUpdate } from 'svelte/internal';
 	import Scatterplot from '../components/plots/scatterplot.svelte';
 	import ServoControl from '../components/servoControl.svelte';
 	import { bleData } from '../stores/stores.js';
@@ -54,7 +54,6 @@
 		<h1>Remote data demo</h1>
 	</div>
 
-	<ServoControl />
 	<Lineplot
 		{data}
 		minPoint={{ x: -60, y: -1 }}
