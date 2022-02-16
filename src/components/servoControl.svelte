@@ -23,7 +23,8 @@
 			optionalServices: [
 				'1a6a0dc9-7db0-4e5f-8b48-5122af7d0b73',
 				'6e400003-b5a3-f393-e0a9-e50e24dcca9e',
-				'6e400005-b5a3-f393-e0a9-e50e24dcca9e'
+				'6e400005-b5a3-f393-e0a9-e50e24dcca9e',
+                '6e400007-b5a3-f393-e0a9-e50e24dcca9e'
 			]
 		});
 		$bleConnection['device'] = device;
