@@ -1,13 +1,12 @@
 <script lang="ts">
 	import { afterUpdate } from 'svelte/internal';
 	import Scatterplot from '../components/plots/scatterplot.svelte';
-	import ServoControl from '../components/servoControl.svelte';
 	import { bleData } from '../stores/stores.js';
 	import Lineplot from '../components/plots/lineplot.svelte';
 	import Scatter3D from '../components/plots/Scatter3D.svelte';
 	import Hand from '../components/hand.svelte';
 
-	let points: { timestamp: number; period: number; sin: number }[] = [];
+	let points: { timestamp: number; period: number; sin: number; tip: number }[] = [];
 	let time = Date.now();
 	afterUpdate(() => {
 		time = Date.now();
@@ -17,11 +16,13 @@
 		points = points.filter((point) => point.timestamp - time > -60000);
 		let sinData = data['6e400002-b5a3-f393-e0a9-e50e24dcca9e'];
 		let periodData = data['6e400006-b5a3-f393-e0a9-e50e24dcca9e'];
-		if (sinData && periodData) {
+		let tipData = data['6e400004-b5a3-f393-e0a9-e50e24dcca9e'];
+		if (sinData && periodData && tipData) {
 			points.push({
 				timestamp: time,
 				period: periodData['value'],
-				sin: sinData['value']
+				sin: sinData['value'],
+				tip: tipData['value']/1200
 			});
 		}
 	});
@@ -46,7 +47,7 @@
 	};
 
 	let thumb_distal;
-	$: if (points?.length > 0) thumb_distal = points[points.length-1].sin
+	$: if (points?.length > 0) thumb_distal = points[points.length-1].tip
 </script>
 
 <div id="container">

@@ -4,6 +4,7 @@
 	let device;
 	let server;
 	let encoder = new TextEncoder();
+	let connected = false;
 
 	$: server = $bleConnection['server'];
 	$: device = $bleConnection['device'];
@@ -11,7 +12,7 @@
 	async function handleConnect() {
 		if (server?.connected) {
 			server.disconnect();
-			console.log('disconnected');
+			connected = false;
 			return;
 		}
 		device = await navigator.bluetooth.requestDevice({
@@ -31,6 +32,7 @@
 
 		server = await device.gatt.connect();
 		$bleConnection['server'] = server;
+		connected = true;
 
 		let services = await server.getPrimaryServices();
 		let characteristics = await Promise.all(
@@ -42,8 +44,12 @@
 			await console.log(char);
 			// await console.log(char.uuid, new Float32Array(await char.value.buffer)[0])
 			char.oncharacteristicvaluechanged = async () => {
-                if(server?.connected == false) return;
-				await char.readValue();
+				try {
+					await char.readValue();
+				}
+				catch(err){
+					console.log(err)
+				}
 				let uuid = char.uuid;
 				let value = new Float32Array(await char.value.buffer)[0];
 				bleData.update((data) => {
