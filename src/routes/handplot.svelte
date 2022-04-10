@@ -5,6 +5,7 @@
 	import Lineplot from '../components/plots/lineplot.svelte';
 	import Scatter3D from '../components/plots/Scatter3D.svelte';
 	import Hand from '../components/hand.svelte';
+import BleCharTable from '../components/BLECharTable.svelte';
 
 	let points: { timestamp: number; period: number; sin: number; tip: number }[] = [];
 	let time = Date.now();
@@ -14,14 +15,14 @@
 
 	bleData.subscribe((data) => {
 		points = points.filter((point) => point.timestamp - time > -60000);
-		let sinData = data['6e400002-b5a3-f393-e0a9-e50e24dcca9e'];
-		let periodData = data['6e400006-b5a3-f393-e0a9-e50e24dcca9e'];
+		let thumbPos = data['6e400002-b5a3-f393-e0a9-e50e24dcca9e']/4096;
+		let test3 = data['6e400006-b5a3-f393-e0a9-e50e24dcca9e'];
 		let tipData = data['6e400004-b5a3-f393-e0a9-e50e24dcca9e'];
-		if (sinData && periodData && tipData) {
+		if (thumbPos && test3 && tipData) {
 			points.push({
 				timestamp: time,
-				period: periodData['value'],
-				sin: sinData['value'],
+				period: test3['value'],
+				sin: thumbPos['value'],
 				tip: tipData['value']/1200
 			});
 		}
@@ -47,7 +48,7 @@
 	};
 
 	let thumb_distal;
-	$: if (points?.length > 0) thumb_distal = points[points.length-1].tip
+	$: if (points?.length > 0) thumb_distal = points[points.length-1].sin;
 </script>
 
 <div id="container">
@@ -69,24 +70,7 @@
 <!-- <div id="plot3d" >
     <Scatter3D points={data3} />
 </div> -->
-
-<table>
-	{#each Object.entries($bleData) as characteristic (characteristic[0])}
-		<tr>
-			<td>{characteristic[0]}</td>
-			<td>{$bleData[characteristic[0]].value}</td>
-			<!-- svelte-ignore missing-declaration -->
-			<td
-				><button
-					on:click={() => {
-						let payload = new Float32Array([$bleData[characteristic[0]].value * 2]);
-						$bleData[characteristic[0]].characteristic.writeValue(payload);
-					}}>increment</button
-				></td
-			>
-		</tr>
-	{/each}
-</table>
+<BleCharTable />
 
 <style>
 	#container {

@@ -1,9 +1,9 @@
 <script lang=ts>
-import ServoControl from "../components/servoControl.svelte";
+import Controls from "../components/controls.svelte";
      
 </script>
 
-<ServoControl />
+<Controls />
 <slot></slot>
 
 <style>

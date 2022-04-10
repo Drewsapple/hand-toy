@@ -2,14 +2,12 @@
 	import { onMount } from 'svelte';
 	import { line, scaleLinear } from 'd3';
 
-	interface Data2D {
-		points: point[];
-	}
+	
 	interface point {
 		x: number;
 		y: number;
 	}
-	export let data: Data2D;
+	export let data: point[];
 	export let minPoint: point;
 	export let maxPoint: point;
 	export let xTickCount: number;
@@ -50,7 +48,7 @@
 	$: lineFromData = () => {
 		return line()
 			.x((d) => xScale(d.x))
-			.y((d) => yScale(d.y))(data.points);
+			.y((d) => yScale(d.y))(data);
 	}
 </script>
 

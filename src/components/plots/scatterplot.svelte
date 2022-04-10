@@ -2,14 +2,11 @@
 	import { onMount } from 'svelte';
 	import { scaleLinear } from 'd3';
 
-	interface ScatterData {
-		points: point[];
-	}
 	interface point {
 		x: number;
 		y: number;
 	}
-	export let data: ScatterData;
+	export let data: point[];
 	export let minPoint: point;
 	export let maxPoint: point;
 	export let xTickCount: number;
@@ -70,7 +67,7 @@
 	</g>
 
 	<!-- data -->
-	{#each data.points as point}
+	{#each data as point}
 		<circle cx={xScale(point.x)} cy={yScale(point.y)} r="5" />
 	{/each}
 </svg>
