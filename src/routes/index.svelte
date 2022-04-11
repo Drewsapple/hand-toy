@@ -10,7 +10,7 @@ import VibrationSettings from '$lib/components/VibrationSettings.svelte';
 
 <div class="bg-orange-50 min-h-full">
 	<h2 class="hero text-4xl p-4">My Prosthesis</h2>
-	<div class="grid grid-cols-2">
+	<div class="grid grid-cols-1 md:grid-cols-2">
 		<div class="card card-bordered m-2 border-8 border-orange-200">
 			<Battery percentage={85} />
 		</div>

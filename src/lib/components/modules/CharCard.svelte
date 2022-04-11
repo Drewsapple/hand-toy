@@ -41,6 +41,7 @@
 	<div class="card-actions">
 		<select
 			bind:value={selected}
+            class="select-lg"
 			on:change={() => {
 				pts = [];
 			}}

@@ -39,6 +39,7 @@
 		{:else}
 			<button
 				class="btn"
+				disabled={selected.length < 1}
 				on:click={() => {
 					recording = true;
 					file = "timestamp, ";
@@ -57,7 +58,7 @@
 		<select
 			multiple
 			bind:value={selected}
-			
+			class="select-lg"
 		>
 			{#each Object.entries($bleData) as characteristic}
 				<option value={characteristic[0]}>{characteristic[0]}</option>
