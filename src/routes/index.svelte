@@ -1,44 +1,36 @@
-<script lang='ts'>
-import Hand from "../components/hand.svelte";
-import { bleData } from "../stores/stores"
-    
+<script lang="ts">
+	import Hand from '$lib/components/hand.svelte';
+	import Battery from '$lib/components/modules/Battery.svelte';
+import CharCard from '$lib/components/modules/CharCard.svelte';
+import Recorder from '$lib/components/modules/Recorder.svelte';
+	import VibeMode from '$lib/components/modules/VibeMode.svelte';
+import VibrationSettings from '$lib/components/VibrationSettings.svelte';
+	import { bleData } from '$lib/stores/stores';
 </script>
-<div id="container">
-    <div>
-        <h1>Welcome to Hand-Toy</h1>
-        <p>This demo is built using Svelte-Kit and Three.js</p>
-    </div>
 
+<div class="bg-orange-50 min-h-full">
+	<h2 class="hero text-4xl p-4">My Prosthesis</h2>
+	<div class="grid grid-cols-2">
+		<div class="card card-bordered m-2 border-8 border-orange-200">
+			<Battery percentage={85} />
+		</div>
+		<div class="card card-bordered m-2 border-8 border-orange-200">
+			<VibeMode />
+		</div>
+		<div class="card card-bordered m-2 border-8 border-orange-200">
+			<CharCard />
+		</div>
+		<div class="card card-bordered m-2 border-8 border-orange-200">
+			<Recorder />
+		</div>
+		<div class="card card-bordered m-2 border-8 border-orange-200">
+			<div class="card-body">
+				<p class="card-title">+ Add Section</p>
+			</div>
+			<div class="card-actions" />
+		</div>
+	</div>
 </div>
 
-
-<table>
-	{#each Object.entries($bleData) as characteristic}
-		<tr>
-			<td>{characteristic[0]}</td>
-			<td>{characteristic[1].value}</td>
-			<!-- svelte-ignore missing-declaration -->
-			<td
-				><button
-					on:click={() => {
-						let payload = new Float32Array([characteristic[1].value * 2]);
-						characteristic[1].characteristic.writeValue(payload);
-					}}>increment</button
-				></td
-			>
-		</tr>
-	{/each}
-</table>
-
-
 <style>
-    #container {
-        max-width: 100vw;
-        max-height: 100vh;
-        display: flex;
-        flex-direction: column;
-    }
-    #container > * {
-        padding: 1rem;
-    }
 </style>

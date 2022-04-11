@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { format, mode } from 'd3';
 
-	import { bleData } from '../stores/stores';
+	import { bleData } from '$lib/stores/stores';
 	let vibConf;
 	let characteristic;
 	$: if ($bleData)

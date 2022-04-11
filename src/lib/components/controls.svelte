@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { bleData, bleConnection } from '../stores/stores.js';
+	import { bleData, bleConnection } from '$lib/stores/stores.js';
 
 	let device;
 	let server;
@@ -25,8 +25,8 @@
 				'1a6a0dc9-7db0-4e5f-8b48-5122af7d0b73',
 				'6e400003-b5a3-f393-e0a9-e50e24dcca9e',
 				'6e400005-b5a3-f393-e0a9-e50e24dcca9e',
-                '6e400007-b5a3-f393-e0a9-e50e24dcca9e',
-				'6e400009-b5a3-f393-e0a9-e50e24dcca9e',
+				'6e400007-b5a3-f393-e0a9-e50e24dcca9e',
+				'6e400009-b5a3-f393-e0a9-e50e24dcca9e'
 			]
 		});
 		$bleConnection['device'] = device;
@@ -47,9 +47,8 @@
 			char.oncharacteristicvaluechanged = async () => {
 				try {
 					await char.readValue();
-				}
-				catch(err){
-					console.log(err)
+				} catch (err) {
+					console.log(err);
 				}
 				let uuid = char.uuid;
 				let value = new Float32Array(await char.value.buffer)[0];
@@ -71,21 +70,18 @@
 	}
 </script>
 
-<nav class="headerbar">
-	<a href="/">Home</a>
-	<a href="/handplot">Hand Plot</a>
-	<a href="/feedback">Velo Test</a>
-	<button id="connector" on:click={handleConnect}
-		>{server?.connected ? 'Disconnect' : 'Connect Device'}</button
-	>
+<nav class="navbar bg-orange-200">
+	<span class="navbar-start">
+		<a class="p-2 btn rounded-md btn-ghost" href="/">Home</a>
+		<a class="p-2 btn rounded-md btn-ghost" href="/handplot">Hand Plot</a>
+		<a class="p-2 btn rounded-md btn-ghost" href="/feedback">Velo Test</a>
+	</span>
+	<span class="navbar-end">
+		<button class="p-2 btn btn-ghost rounded-md" on:click={handleConnect}
+			>{server?.connected ? 'Disconnect' : 'Connect Device'}</button
+		>
+	</span>
 </nav>
 
 <style>
-	.headerbar {
-		position: fixed;
-	}
-	#connector {
-		position: fixed;
-		right: 0;
-	}
 </style>

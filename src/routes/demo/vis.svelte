@@ -1,8 +1,8 @@
 <script lang="ts">
-	import VibrationSettings from '../../components/VibrationSettings.svelte';
+	import VibrationSettings from '$lib/components/VibrationSettings.svelte';
 	import { afterUpdate } from 'svelte';
-	import Scatterplot from '../../components/plots/scatterplot.svelte';
-	import Lineplot from '../../components/plots/lineplot.svelte';
+	import Scatterplot from '$lib/components/plots/scatterplot.svelte';
+	import Lineplot from '$lib/components/plots/lineplot.svelte';
 	let points: { timestamp: number; tip1: number; tip2: number }[] = [];
 
 	let recording = false;

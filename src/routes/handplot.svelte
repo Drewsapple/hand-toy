@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { afterUpdate } from 'svelte/internal';
-	import Scatterplot from '../components/plots/scatterplot.svelte';
-	import { bleData } from '../stores/stores.js';
-	import Lineplot from '../components/plots/lineplot.svelte';
-	import Scatter3D from '../components/plots/Scatter3D.svelte';
-	import Hand from '../components/hand.svelte';
-import BleCharTable from '../components/BLECharTable.svelte';
+	import Scatterplot from '$lib/components/plots/scatterplot.svelte';
+	import { bleData } from '$lib/stores/stores';
+	import Lineplot from '$lib/components/plots/lineplot.svelte';
+	import Scatter3D from '$lib/components/plots/Scatter3D.svelte';
+	import Hand from '$lib/components/hand.svelte';
+	import BleCharTable from '$lib/components/BLECharTable.svelte';
 
 	let points: { timestamp: number; period: number; sin: number; tip: number }[] = [];
 	let time = Date.now();
@@ -15,7 +15,7 @@ import BleCharTable from '../components/BLECharTable.svelte';
 
 	bleData.subscribe((data) => {
 		points = points.filter((point) => point.timestamp - time > -60000);
-		let thumbPos = data['6e400002-b5a3-f393-e0a9-e50e24dcca9e']/4096;
+		let thumbPos = data['6e400002-b5a3-f393-e0a9-e50e24dcca9e'] / 4096;
 		let test3 = data['6e400006-b5a3-f393-e0a9-e50e24dcca9e'];
 		let tipData = data['6e400004-b5a3-f393-e0a9-e50e24dcca9e'];
 		if (thumbPos && test3 && tipData) {
@@ -23,7 +23,7 @@ import BleCharTable from '../components/BLECharTable.svelte';
 				timestamp: time,
 				period: test3['value'],
 				sin: thumbPos['value'],
-				tip: tipData['value']/1200
+				tip: tipData['value'] / 1200
 			});
 		}
 	});
@@ -48,7 +48,7 @@ import BleCharTable from '../components/BLECharTable.svelte';
 	};
 
 	let thumb_distal;
-	$: if (points?.length > 0) thumb_distal = points[points.length-1].sin;
+	$: if (points?.length > 0) thumb_distal = points[points.length - 1].sin;
 </script>
 
 <div id="container">
@@ -65,7 +65,6 @@ import BleCharTable from '../components/BLECharTable.svelte';
 	/>
 </div>
 <Hand {thumb_distal} />
-
 
 <!-- <div id="plot3d" >
     <Scatter3D points={data3} />
