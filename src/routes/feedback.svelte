@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { bleData } from '$lib/stores/stores'
-	import VibratationSettings from '$lib/components/VibrationSettings.svelte';
 	import { afterUpdate } from 'svelte';
 	import Scatterplot from '$lib/components/plots/scatterplot.svelte';
 	import { map } from 'd3';
@@ -73,8 +72,7 @@
 	});
 </script>
 
-<br /><br /><br /><br /><br /><br />
-<VibrationSettings />
+
 
 <button
 	on:click={() => {
