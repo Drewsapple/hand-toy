@@ -20,6 +20,7 @@
 			});
         }
     })
+
 </script>
 
 <div class="card">
@@ -28,11 +29,11 @@
 		{#if pts.length > 0}
 			<Lineplot
 				data={pts.map((point) => ({
-                    x: point.timestamp - time,
+                    x: (point.timestamp - time) / 1000,
                     y: point.value
                 }))}
 				minPoint={{ x: -60, y: -1 }}
-				maxPoint={{ x: 0, y: 4096 }}
+				maxPoint={{ x: 0, y: 1 }}
 				xTickCount={11}
 				yTickCount={7}
 			/>

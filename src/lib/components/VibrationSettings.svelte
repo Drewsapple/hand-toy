@@ -19,10 +19,7 @@
 	let saveSequence = async () => {
         let modelist = selectedMode.slice(0,seqLen)
         modelist.push(0);
-        console.log(modelist)
         let modearr = new Uint8Array(modelist);
-        
-		console.log(modearr);
 	};
 
 	let selectedMode = [

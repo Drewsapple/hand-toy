@@ -24,7 +24,6 @@
 				tip2: tip2['value']
 			});
 			if (recording) {
-				console.log('recording');
 				recBuffer.push({
 					timestamp: time,
 					tip1: tip1['value'],

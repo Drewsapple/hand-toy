@@ -5,11 +5,13 @@
 	let server;
 	let encoder = new TextEncoder();
 	let connected = false;
+	let watchdog;
 
 	$: server = $bleConnection['server'];
 	$: device = $bleConnection['device'];
 
 	async function handleConnect() {
+		if(watchdog) clearInterval(watchdog);
 		if (server?.connected) {
 			server.disconnect();
 			connected = false;
@@ -32,8 +34,11 @@
 		$bleConnection['device'] = device;
 
 		server = await device.gatt.connect();
+		watchdog = setInterval(() => {
+			connected = server.connected
+		}, 1000);
 		$bleConnection['server'] = server;
-		connected = true;
+		
 
 		let services = await server.getPrimaryServices();
 		let characteristics = await Promise.all(
@@ -42,7 +47,6 @@
 		//console.log(await (characteristics[0]).readValue())
 		await characteristics.forEach(async (char) => {
 			await char;
-			await console.log(char);
 			// await console.log(char.uuid, new Float32Array(await char.value.buffer)[0])
 			char.oncharacteristicvaluechanged = async () => {
 				try {
@@ -70,15 +74,18 @@
 	}
 </script>
 
-<nav class="navbar bg-orange-200">
+<nav class="navbar bg-secondary max-w-screen overflow-hidden">
 	<span class="navbar-start">
 		<a class="p-2 btn rounded-md btn-ghost" href="/">Home</a>
 		<a class="p-2 btn rounded-md btn-ghost" href="/handplot">Hand Plot</a>
 		<a class="p-2 btn rounded-md btn-ghost" href="/feedback">Velo Test</a>
 	</span>
+	<span class="navbar-center invisible md:visible" >
+		<p class="text-2xl">My Prosthesis</p>
+	</span>
 	<span class="navbar-end">
 		<button class="p-2 btn btn-ghost rounded-md" on:click={handleConnect}
-			>{server?.connected ? 'Disconnect' : 'Connect Device'}</button
+			>{connected ? 'Disconnect' : 'Connect Device'}</button
 		>
 	</span>
 </nav>

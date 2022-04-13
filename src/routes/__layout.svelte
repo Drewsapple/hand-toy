@@ -3,7 +3,7 @@ import Controls from "$lib/components/controls.svelte";
 import "../app.css"
      
 </script>
-<div class="min-h-screen bg-orange-50">
+<div class="min-h-screen bg-neutral max-w-screen overflow-y-hidden">
     <Controls />
     <slot></slot>
 </div>

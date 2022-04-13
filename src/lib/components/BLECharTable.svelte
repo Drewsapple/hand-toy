@@ -1,7 +1,6 @@
 <script>
 	import { bleData } from '$lib/stores/stores';
     let entry = {};
-    $: console.log(entry)
 </script>
 
 <table>
