@@ -48,24 +48,25 @@
 		await characteristics.forEach(async (char) => {
 			await char;
 			// await console.log(char.uuid, new Float32Array(await char.value.buffer)[0])
-			char.oncharacteristicvaluechanged = async () => {
-				try {
-					await char.readValue();
-				} catch (err) {
-					console.log(err);
-				}
-				let uuid = char.uuid;
-				let value = new Float32Array(await char.value.buffer)[0];
+			char.oncharacteristicvaluechanged = async (e) => {
+				let value = new Float32Array(e.currentTarget.value.buffer)[0];
 				bleData.update((data) => {
-					data[uuid] = {
+					data[e.currentTarget.uuid] = {
 						value,
 						characteristic: char
 					};
 					return data;
 				});
 			};
-			await char.readValue();
-			await char.startNotifications();
+			setInterval(async () => {
+				try{
+					await char.readValue();
+				}
+				catch(e) {
+					console.debug(e.message)
+				}
+			}, 500)
+			// await char.startNotifications();
 		});
 		// 	return Promise.all([
 		//         service.getCharacteristic("6e400003-b5a3-f393-e0a9-e50e24dcca9e").then(handleCharacteristicLogString),
