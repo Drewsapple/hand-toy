@@ -59,11 +59,13 @@
 				});
 			};
 			setInterval(async () => {
-				try{
-					await char.readValue();
-				}
-				catch(e) {
-					console.debug(e.message)
+				if(connected) {
+					try{
+						await char.readValue();
+					}
+					catch(e) {
+						console.debug(e.message)
+					}
 				}
 			}, 500)
 			// await char.startNotifications();
