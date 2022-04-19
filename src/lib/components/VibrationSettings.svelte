@@ -1,38 +1,43 @@
 <script lang="ts">
-	import { format, mode } from 'd3';
-
 	import { bleData } from '$lib/stores/stores';
+	import { onMount } from 'svelte';
 	let vibConf;
+	let newConf;
 	let characteristic;
-	$: if ($bleData)
-		characteristic = $bleData['6e400008-b5a3-f393-e0a9-e50e24dcca9e']?.characteristic;
+	let initialized = false;
+	export let mode = undefined;
+	$: if ($bleData) characteristic = $bleData['VibConf']?.characteristic;
 
 	$: if (characteristic) vibConf = new Uint8Array(characteristic.value.buffer);
 
-	let toggleVal = (channel) => {
-		return async () => {
-			vibConf[channel] = vibConf[channel] == 0 ? 1 : 0;
-			characteristic.writeValue(vibConf);
-		};
-	};
+	export const push = async () => {
+		if(newConf && newConf.length == vibConf.length) {
+			await characteristic.writeValue(new Uint8Array(newConf.buffer));
+			console.log(characteristic)
+			initialized = false;
+			copyConf();
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 
-	let saveSequence = async () => {
-        let modelist = selectedMode.slice(0,seqLen)
-        modelist.push(0);
-        let modearr = new Uint8Array(modelist);
-	};
-
-	let selectedMode = [
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-    ];
+	export const copyConf = async () => {
+		if(!initialized){
+			if(!vibConf) {
+				// Wait for vibConf to be initialized
+				setTimeout(copyConf, 200);
+			} else {
+				newConf = new Uint8Array(vibConf.buffer);
+				initialized = true;
+			}
+		}
+	}
+	onMount(copyConf);
 
 	let modes = [
+		{ id: 0, text: 'Off' },
 		{ id: 1, text: 'Strong Click - 100%' },
 		{ id: 2, text: 'Strong Click - 60%' },
 		{ id: 3, text: 'Strong Click - 30%' },
@@ -161,25 +166,47 @@
 	let seqLen = 1;
 </script>
 
-{#if vibConf}
-	<span>
-		<label>
-        Pattern Length    
-        <input bind:value={seqLen} type="range" min="1" max="7" />
-        </label>
-	</span>
-
-	{#each Array.from({ length: seqLen }, (_, i) => i) as num}
-		<br />
-		{num + 1}
-		<select bind:value={selectedMode[num]}>
-			{#each modes as mode}
-				<option value={mode.id}>{mode.text}</option>
+{#if vibConf && newConf}
+	{#if mode != undefined}
+		<table class="table table-compact w-3/4">
+			{#each Array.from({ length: 5 }, (_, i) => i) as sensornum}
+				<tr 
+					><td>Sensor {sensornum}</td>
+					{#each Array.from({ length: 3 }, (_, i) => i) as categoryNum}
+						<td>
+							<select class="select select-xs w-16" bind:value={newConf[sensornum * 9 + mode * 3 + categoryNum]}>
+								{#each modes as mode}
+									<option value={mode.id}>{mode.text}</option>
+								{/each}
+							</select>
+						</td>
+					{/each}
+				</tr>
 			{/each}
-		</select>
-	{/each}
-	<br />
-	<button on:click={saveSequence}>Save and Test</button>
+		</table>
+	{:else}
+		{#each Array.from({ length: 3 }, (_, i) => i) as modenum}
+			<table class="table table-compact">
+				<th>Mode {modenum}</th>
+				{#each Array.from({ length: 5 }, (_, i) => i) as sensornum}
+					<tr
+						><td>Sensor {sensornum}</td>
+						{#each Array.from({ length: 3 }, (_, i) => i) as categoryNum}
+							<td>
+								<select
+									bind:value={newConf[sensornum * 9 + modenum * 3 + categoryNum]}
+								>
+									{#each modes as mode}
+										<option value={mode.id}>{mode.text}</option>
+									{/each}
+								</select>
+							</td>
+						{/each}
+					</tr>
+				{/each}
+			</table>
+		{/each}
+	{/if}
 {/if}
 
 <style>

@@ -16,7 +16,7 @@
         if(data[selected]) {
             pts.push({
 				timestamp: time,
-				value: data[selected].value
+				value: data[selected].value[0]
 			});
         }
     })
@@ -37,6 +37,7 @@
 				xTickCount={11}
 				yTickCount={7}
 			/>
+			<p>Value: {pts[pts.length-1].value}</p>
 		{/if}
 	</div>
 	<div class="card-actions">

@@ -7,6 +7,14 @@
 	let connected = false;
 	let watchdog;
 
+	let friendlyNames = {
+		"6e400002-b5a3-f393-e0a9-e50e24dcca9e" : "Test1",
+		"6e400006-b5a3-f393-e0a9-e50e24dcca9e" : "MaxPower",
+		"6e400008-b5a3-f393-e0a9-e50e24dcca9e" : "VibConf",
+		"6e400004-b5a3-f393-e0a9-e50e24dcca9e" : "Force Readings",
+		"6e40000a-b5a3-f393-e0a9-e50e24dcca9e" : "Velo2"
+	};
+
 	$: server = $bleConnection['server'];
 	$: device = $bleConnection['device'];
 
@@ -47,11 +55,19 @@
 		//console.log(await (characteristics[0]).readValue())
 		await characteristics.forEach(async (char) => {
 			await char;
-			// await console.log(char.uuid, new Float32Array(await char.value.buffer)[0])
 			char.oncharacteristicvaluechanged = async (e) => {
-				let value = new Float32Array(e.currentTarget.value.buffer)[0];
+				let value;
+				let buffer = char.value.buffer;
+				if(buffer.byteLength %4 != 0) {
+					// console.log(`${friendlyNames[char.uuid]} length suggests uint8, length ${buffer.byteLength}`);
+					value = new Uint8Array(buffer);
+				}
+				else{
+					// console.log(`${friendlyNames[char.uuid]} length suggests float32`);
+					value = new Float32Array(buffer);
+				}
 				bleData.update((data) => {
-					data[e.currentTarget.uuid] = {
+					data[friendlyNames[char.uuid]] = {
 						value,
 						characteristic: char
 					};
@@ -70,10 +86,6 @@
 			}, 500)
 			// await char.startNotifications();
 		});
-		// 	return Promise.all([
-		//         service.getCharacteristic("6e400003-b5a3-f393-e0a9-e50e24dcca9e").then(handleCharacteristicLogString),
-		//         // service.getCharacteristic("6e400004-b5a3-f393-e0a9-e50e24dcca9e").then(handlePIDgains),
-		// ]);
 	}
 </script>
 

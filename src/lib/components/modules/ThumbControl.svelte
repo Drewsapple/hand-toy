@@ -3,7 +3,7 @@
 	let angle = 0;
 	let updatable = true;
 
-	let key = '6e400006-b5a3-f393-e0a9-e50e24dcca9e';
+	let key = 'MaxPower';
 
 	bleData.subscribe((data) => {
 		if (updatable && data[key]) {
@@ -13,7 +13,7 @@
 </script>
 
 <div class="card-body">
-	<p class="card-title">Thumb Position</p>
+	<p class="card-title">Thumb Power Limit</p>
 	<input
 		type="range"
 		class="range"
