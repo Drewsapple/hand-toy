@@ -7,7 +7,7 @@
 	import Hand from '$lib/components/hand.svelte';
 	import BleCharTable from '$lib/components/BLECharTable.svelte';
 
-	let points: { timestamp: number; period: number; sin: number; tip: number }[] = [];
+	let points: { timestamp: number; maxP: number; thumb: number }[] = [];
 	let time = Date.now();
 	afterUpdate(() => {
 		time = Date.now();
@@ -15,15 +15,13 @@
 
 	bleData.subscribe((data) => {
 		points = points.filter((point) => point.timestamp - time > -60000);
-		let thumbPos = data['6e400002-b5a3-f393-e0a9-e50e24dcca9e'] / 4096;
-		let test3 = data['6e400006-b5a3-f393-e0a9-e50e24dcca9e'];
-		let tipData = data['6e400004-b5a3-f393-e0a9-e50e24dcca9e'];
-		if (thumbPos && test3 && tipData) {
+		let thumbPos = data['Test1'];
+		let maxPower = data['MaxPower'];
+		if (thumbPos && maxPower) {
 			points.push({
 				timestamp: time,
-				period: test3['value'],
-				sin: thumbPos['value'],
-				tip: tipData['value'] / 1200
+				maxP: maxPower['value'][0],
+				thumb: thumbPos['value'][0],
 			});
 		}
 	});
@@ -32,23 +30,13 @@
 		points: points.map((point) => {
 			return {
 				x: (point.timestamp - time) / 1000,
-				y: point.sin
-			};
-		})
-	};
-
-	$: data3 = {
-		points: points.map((point) => {
-			return {
-				x: (point.timestamp - time) / 1000,
-				y: point.period,
-				z: 5 * point.sin
+				y: point.maxP
 			};
 		})
 	};
 
 	let thumb_distal;
-	$: if (points?.length > 0) thumb_distal = points[points.length - 1].sin;
+	$: if (points?.length > 0) thumb_distal = points[points.length - 1].thumb;
 </script>
 
 <div id="container">
@@ -58,18 +46,16 @@
 
 	<Lineplot
 		{data}
-		minPoint={{ x: -60, y: -1 }}
+		minPoint={{ x: -60, y: 0 }}
 		maxPoint={{ x: 0, y: 1 }}
 		xTickCount={11}
-		yTickCount={7}
+		yTickCount={6}
 	/>
 </div>
-<Hand {thumb_distal} />
-
-<!-- <div id="plot3d" >
-    <Scatter3D points={data3} />
-</div> -->
-<BleCharTable />
+<div class="min-h-12">
+	<Hand {thumb_distal} />
+</div>
+<!-- <BleCharTable /> -->
 
 <style>
 	#container {

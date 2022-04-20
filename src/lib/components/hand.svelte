@@ -28,7 +28,10 @@
 		skele = new SkeletonHelper(hand?.children[2])
 	}
 
-	$: if(skele) { skele.bones.find((bone) => bone.name == 'thumb03L').rotation.x = $bounce }
+	$: if(skele) { 
+		skele.bones.find((bone) => bone.name == 'thumb02L').rotation.x = $bounce*0.7
+		skele.bones.find((bone) => bone.name == 'thumb03L').rotation.x = $bounce
+	}
 
 </script>
 
@@ -49,8 +52,6 @@
 <style>
 	div {
 		position: flex;
-		top: 0;
-		left: 0;
 		width: 100%;
 		height: 100%;
 	}
