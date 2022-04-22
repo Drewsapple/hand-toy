@@ -12,7 +12,8 @@
 		"6e400006-b5a3-f393-e0a9-e50e24dcca9e" : "MaxPower",
 		"6e400008-b5a3-f393-e0a9-e50e24dcca9e" : "VibConf",
 		"6e400004-b5a3-f393-e0a9-e50e24dcca9e" : "Force Readings",
-		"6e40000a-b5a3-f393-e0a9-e50e24dcca9e" : "Velo2"
+		"6e40000a-b5a3-f393-e0a9-e50e24dcca9e" : "Velo2",
+		"6e40000d-b5a3-f393-e0a9-e50e24dcca9e" : "Modes",
 	};
 
 	$: server = $bleConnection['server'];
@@ -36,7 +37,8 @@
 				'6e400003-b5a3-f393-e0a9-e50e24dcca9e',
 				'6e400005-b5a3-f393-e0a9-e50e24dcca9e',
 				'6e400007-b5a3-f393-e0a9-e50e24dcca9e',
-				'6e400009-b5a3-f393-e0a9-e50e24dcca9e'
+				'6e400009-b5a3-f393-e0a9-e50e24dcca9e',
+				'6e40000b-b5a3-f393-e0a9-e50e24dcca9e'
 			]
 		});
 		$bleConnection['device'] = device;
