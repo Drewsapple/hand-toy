@@ -11,6 +11,7 @@
 	$: if (characteristic) vibConf = new Uint8Array(characteristic.value.buffer);
 
 	export const push = async () => {
+		console.log("Push called")
 		if(newConf && newConf.length == vibConf.length) {
 			await characteristic.writeValue(new Uint8Array(newConf.buffer));
 			console.log(characteristic)

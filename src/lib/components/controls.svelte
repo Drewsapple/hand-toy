@@ -3,7 +3,6 @@
 
 	let device;
 	let server;
-	let encoder = new TextEncoder();
 	let connected = false;
 	let watchdog;
 
@@ -20,6 +19,7 @@
 	$: device = $bleConnection['device'];
 
 	async function handleConnect() {
+		console.debug("handleConnect:");
 		if(watchdog) clearInterval(watchdog);
 		if (server?.connected) {
 			server.disconnect();
@@ -57,6 +57,7 @@
 		//console.log(await (characteristics[0]).readValue())
 		await characteristics.forEach(async (char) => {
 			await char;
+			console.log(char);
 			char.oncharacteristicvaluechanged = async (e) => {
 				let value;
 				let buffer = char.value.buffer;
