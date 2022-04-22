@@ -7,8 +7,8 @@
 </script>
 
 <div id="container">
-	<BleCharTable />
 	<ModeSetter />
+	<BleCharTable />
 </div>
 
 <style>

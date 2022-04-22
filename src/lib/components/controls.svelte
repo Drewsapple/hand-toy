@@ -97,6 +97,7 @@
 		<a class="p-2 btn rounded-md btn-ghost" href="/">Home</a>
 		<a class="p-2 btn rounded-md btn-ghost" href="/handplot">Hand Plot</a>
 		<a class="p-2 btn rounded-md btn-ghost" href="/feedback">Velo Test</a>
+		<a class="p-2 btn rounded-md btn-ghost" href="/proptable">Prop Table</a>
 	</span>
 	<span class="navbar-center invisible md:visible" >
 		<p class="text-2xl">My Prosthesis</p>
